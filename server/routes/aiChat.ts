@@ -52,123 +52,30 @@ router.post('/', async (req: Request, res: Response) => {
         systemInstruction: SYSTEM_PROMPT
       });
 
-      // Convert messages to Gemini format with file support
-      const history = messages.slice(0, -1).map((msg: any) => {
-        const parts: any[] = [];
-        
-        // Add file content if present
-        if (msg.files && msg.files.length > 0) {
-          msg.files.forEach((file: any) => {
-            if (file.type.startsWith('image/')) {
-              // Extract base64 data
-              const base64Data = file.content.split(',')[1];
-              const mimeType = file.content.split(';')[0].split(':')[1];
-              parts.push({
-                inlineData: {
-                  data: base64Data,
-                  mimeType: mimeType
-                }
-              });
-            } else {
-              // For non-image files, include file info in text
-              parts.push({ 
-                text: `[File: ${file.name} (${file.type}, ${(file.size / 1024).toFixed(1)} KB)]` 
-              });
-            }
-          });
-        }
-        
-        // Add text content
-        parts.push({ text: msg.content });
-        
-        return {
+      // Convert messages to Gemini format
+      const chat = geminiModel.startChat({
+        history: messages.slice(0, -1).map((msg: any) => ({
           role: msg.role === 'assistant' ? 'model' : 'user',
-          parts: parts,
-        };
+          parts: [{ text: msg.content }],
+        })),
       });
 
-      const chat = geminiModel.startChat({ history });
-
       const lastMessage = messages[messages.length - 1];
-      const lastParts: any[] = [];
-      
-      // Add files from last message
-      if (lastMessage.files && lastMessage.files.length > 0) {
-        lastMessage.files.forEach((file: any) => {
-          if (file.type.startsWith('image/')) {
-            const base64Data = file.content.split(',')[1];
-            const mimeType = file.content.split(';')[0].split(':')[1];
-            lastParts.push({
-              inlineData: {
-                data: base64Data,
-                mimeType: mimeType
-              }
-            });
-          } else {
-            lastParts.push({ 
-              text: `[File: ${file.name} (${file.type}, ${(file.size / 1024).toFixed(1)} KB)]` 
-            });
-          }
-        });
-      }
-      
-      lastParts.push({ text: lastMessage.content });
-      
-      const result = await chat.sendMessage(lastParts);
+      const result = await chat.sendMessage(lastMessage.content);
       const response = result.response;
 
       res.json({
         content: [{ text: response.text() }],
-        model: 'gemini-2.5-flash'
+        model: 'gemini-pro'
       });
     } else {
-      // Use Claude (default) - supports vision
-      const formattedMessages = messages.map((msg: any) => {
-        const content: any[] = [];
-        
-        // Add files if present
-        if (msg.files && msg.files.length > 0) {
-          msg.files.forEach((file: any) => {
-            if (file.type.startsWith('image/')) {
-              // Claude supports images
-              const base64Data = file.content.split(',')[1];
-              const mediaType = file.type;
-              content.push({
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: mediaType,
-                  data: base64Data,
-                }
-              });
-            } else {
-              // For non-image files, add as text
-              content.push({
-                type: "text",
-                text: `[Attached file: ${file.name} (${file.type}, ${(file.size / 1024).toFixed(1)} KB)]`
-              });
-            }
-          });
-        }
-        
-        // Add text content
-        content.push({
-          type: "text",
-          text: msg.content
-        });
-        
-        return {
-          role: msg.role,
-          content: content
-        };
-      });
-
+      // Use Claude (default)
       const msg = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: 20000,
         temperature: 0.7,
         system: SYSTEM_PROMPT,
-        messages: formattedMessages
+        messages: messages
       });
 
       res.json({
