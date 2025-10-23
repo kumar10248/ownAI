@@ -552,7 +552,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask anything"
+                placeholder="Type your message... (Shift+Enter for new line)"
                 disabled={isLoading}
                 rows={1}
                 className="w-full px-3 sm:px-5 py-3 sm:py-4 bg-white/5 backdrop-blur-md border border-amber-500/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 text-white placeholder-amber-300/50 resize-none transition-all text-sm sm:text-base"
