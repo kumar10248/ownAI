@@ -64,7 +64,7 @@ export default function Home() {
     setAbortController(controller);
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch('https://own-ai-kappa-ten.vercel.app/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,7 +191,7 @@ export default function Home() {
 
     // Resend to get new response
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch('https://own-ai-kappa-ten.vercel.app/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
