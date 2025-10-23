@@ -462,7 +462,7 @@ export default function Home() {
                                     </code>
                                   );
                                 },
-                                pre: ({ node, ...props }) => <div {...props} />,
+                                pre: ({ node, ...props }) => <div {...(props as any)} />,
                                 table: ({ node, ...props }) => <table className="border-collapse border border-amber-500/30 my-3 w-full" {...props} />,
                                 th: ({ node, ...props }) => <th className="border border-amber-500/30 px-3 py-2 bg-amber-500/20 font-semibold text-amber-200" {...props} />,
                                 td: ({ node, ...props }) => <td className="border border-amber-500/30 px-3 py-2 text-white" {...props} />,
