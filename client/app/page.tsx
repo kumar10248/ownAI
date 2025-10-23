@@ -10,6 +10,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  files?: { name: string; type: string; size: number; content: string }[];
 }
 
 export default function Home() {
@@ -24,8 +25,10 @@ export default function Home() {
   const [showCopyToast, setShowCopyToast] = useState(false);
   const [copyToastMessage, setCopyToastMessage] = useState('');
   const [abortController, setAbortController] = useState<AbortController | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<{ name: string; type: string; size: number; content: string }[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -46,6 +49,61 @@ export default function Home() {
     }
   };
 
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const newFiles: { name: string; type: string; size: number; content: string }[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      
+      // Check file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        showToast('File size should be less than 10MB');
+        continue;
+      }
+
+      // Read file content
+      const content = await readFileAsBase64(file);
+      newFiles.push({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        content
+      });
+    }
+
+    setAttachedFiles((prev) => [...prev, ...newFiles]);
+    
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const readFileAsBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeFile = (index: number) => {
+    setAttachedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -53,10 +111,12 @@ export default function Home() {
     const userMessage: Message = { 
       role: 'user', 
       content: input,
-      timestamp: new Date()
+      timestamp: new Date(),
+      files: attachedFiles.length > 0 ? attachedFiles : undefined
     };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
+    setAttachedFiles([]);
     setIsLoading(true);
 
     // Create new AbortController for this request
@@ -64,7 +124,7 @@ export default function Home() {
     setAbortController(controller);
 
     try {
-      const response = await fetch('https://own-ai-kappa-ten.vercel.app/api/chat', {
+      const response = await fetch('http://localhost:8000/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +132,8 @@ export default function Home() {
         body: JSON.stringify({
           messages: [...messages, userMessage].map(m => ({
             role: m.role,
-            content: m.content
+            content: m.content,
+            files: m.files
           })),
           model: selectedModel
         }),
@@ -160,6 +221,12 @@ export default function Home() {
       setShowCopyToast(true);
       setTimeout(() => setShowCopyToast(false), 2000);
     }
+  };
+
+  const showToast = (message: string) => {
+    setCopyToastMessage(message);
+    setShowCopyToast(true);
+    setTimeout(() => setShowCopyToast(false), 2000);
   };
 
   const startEditing = (index: number, content: string) => {
@@ -476,9 +543,26 @@ export default function Home() {
                             </ReactMarkdown>
                           </div>
                         ) : (
-                          <p className="text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">
-                            {message.content}
-                          </p>
+                          <>
+                            {message.files && message.files.length > 0 && (
+                              <div className="mb-3 space-y-2">
+                                {message.files.map((file, fileIdx) => (
+                                  <div key={fileIdx} className="flex items-center gap-2 bg-black/30 rounded-lg p-2 border border-green-400/30">
+                                    <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-xs text-white truncate">{file.name}</p>
+                                      <p className="text-[10px] text-green-300">{formatFileSize(file.size)}</p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            <p className="text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">
+                              {message.content}
+                            </p>
+                          </>
                         )}
                       </div>
                       
@@ -545,7 +629,52 @@ export default function Home() {
 
         {/* Input Area */}
         <div className="p-3 sm:p-6 backdrop-blur-xl bg-white/5 border-t border-amber-500/20">
+          {/* Attached Files Preview */}
+          {attachedFiles.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              {attachedFiles.map((file, idx) => (
+                <div key={idx} className="flex items-center gap-2 bg-amber-500/20 border border-amber-500/40 rounded-lg px-3 py-2 group">
+                  <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-white truncate max-w-[150px]">{file.name}</p>
+                    <p className="text-[10px] text-amber-300">{formatFileSize(file.size)}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(idx)}
+                    className="p-1 hover:bg-red-500/30 rounded transition-all"
+                  >
+                    <svg className="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          
           <form onSubmit={sendMessage} className="flex gap-2 sm:gap-3 items-end">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/*,.pdf,.txt,.doc,.docx,.csv,.json"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isLoading}
+              className="p-3 sm:p-4 bg-white/10 hover:bg-white/20 rounded-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              title="Attach files"
+            >
+              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 group-hover:text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+              </svg>
+            </button>
             <div className="flex-1 relative">
               <textarea
                 ref={inputRef}
