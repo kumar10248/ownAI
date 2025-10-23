@@ -241,42 +241,42 @@ export default function Home() {
 
       {/* Copy Toast Notification */}
       {showCopyToast && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-slide-in">
-          <div className="bg-black/90 backdrop-blur-md border border-amber-500/50 rounded-xl px-6 py-3 shadow-2xl flex items-center gap-3">
-            <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="fixed top-16 sm:top-20 left-1/2 transform -translate-x-1/2 z-50 animate-slide-in px-4">
+          <div className="bg-black/90 backdrop-blur-md border border-amber-500/50 rounded-xl px-4 sm:px-6 py-2 sm:py-3 shadow-2xl flex items-center gap-2 sm:gap-3">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <span className="text-white font-medium">{copyToastMessage}</span>
+            <span className="text-white font-medium text-sm sm:text-base">{copyToastMessage}</span>
           </div>
         </div>
       )}
 
       <div className="flex flex-col w-full max-w-6xl mx-auto relative z-10 h-screen">
         {/* Header */}
-        <header className="flex items-center justify-between p-6 backdrop-blur-xl bg-white/5 border-b border-amber-500/20 shadow-lg">
-          <div className="flex items-center gap-4">
+        <header className="flex items-center justify-between p-3 sm:p-6 backdrop-blur-xl bg-white/5 border-b border-amber-500/20 shadow-lg">
+          <div className="flex items-center gap-2 sm:gap-4">
             <div className="relative">
-              <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
-                <span className="text-black text-2xl font-bold">AI</span>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+                <span className="text-black text-xl sm:text-2xl font-bold">AI</span>
               </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-black animate-pulse"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-green-400 rounded-full border-2 border-black animate-pulse"></div>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">
+              <h1 className="text-lg sm:text-2xl font-bold text-white">
                 OwnAI Chat
               </h1>
-              <p className="text-sm text-amber-200 flex items-center gap-1">
+              <p className="text-xs sm:text-sm text-amber-200 flex items-center gap-1">
                 <span className="inline-block w-2 h-2 bg-green-400 rounded-full"></span>
                 {selectedModel === 'claude' ? 'Claude AI' : 'Gemini AI'}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-3">
             {/* Model Selector */}
-            <div className="flex gap-2 bg-white/5 rounded-xl p-1 border border-amber-500/30">
+            <div className="flex gap-1 sm:gap-2 bg-white/5 rounded-xl p-1 border border-amber-500/30">
               <button
                 onClick={() => setSelectedModel('claude')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                className={`px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${
                   selectedModel === 'claude'
                     ? 'bg-amber-500 text-black'
                     : 'text-white hover:bg-white/10'
@@ -286,7 +286,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setSelectedModel('gemini')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                className={`px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all ${
                   selectedModel === 'gemini'
                     ? 'bg-amber-500 text-black'
                     : 'text-white hover:bg-white/10'
@@ -297,14 +297,15 @@ export default function Home() {
             </div>
             {messages.length > 0 && (
               <>
-                <span className="text-sm text-amber-200 hidden sm:inline">
+                <span className="text-xs sm:text-sm text-amber-200 hidden md:inline">
                   {messages.length} message{messages.length !== 1 ? 's' : ''}
                 </span>
                 <button
                   onClick={clearChat}
-                  className="px-4 py-2 text-sm font-medium text-white hover:text-amber-400 bg-white/5 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-amber-500/30 hover:border-amber-500/50"
+                  className="px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white hover:text-amber-400 bg-white/5 hover:bg-white/10 rounded-xl transition-all backdrop-blur-sm border border-amber-500/30 hover:border-amber-500/50"
                 >
-                  🗑️ Clear
+                  <span className="hidden sm:inline">🗑️ Clear</span>
+                  <span className="sm:hidden">🗑️</span>
                 </button>
               </>
             )}
@@ -312,34 +313,34 @@ export default function Home() {
         </header>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-amber-500/50 scrollbar-track-transparent">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 scrollbar-thin scrollbar-thumb-amber-500/50 scrollbar-track-transparent">
           {messages.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-8 py-12 animate-fade-in">
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-6 sm:space-y-8 py-8 sm:py-12 animate-fade-in px-4">
               <div className="relative">
-                <div className="w-24 h-24 rounded-3xl bg-linear-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-2xl animate-float">
-                  <span className="text-black text-5xl font-bold">AI</span>
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-linear-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-2xl animate-float">
+                  <span className="text-black text-4xl sm:text-5xl font-bold">AI</span>
                 </div>
                 <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-amber-400 via-amber-500 to-amber-600 blur-2xl opacity-50 animate-pulse"></div>
               </div>
               
-              <div className="space-y-3">
-                <h2 className="text-4xl font-bold text-white">
+              <div className="space-y-2 sm:space-y-3">
+                <h2 className="text-2xl sm:text-4xl font-bold text-white">
                   Welcome to OwnAI Chat
                 </h2>
-                <p className="text-lg text-amber-200 max-w-md">
+                <p className="text-base sm:text-lg text-amber-200 max-w-md px-4">
                   Your intelligent AI assistant powered by {selectedModel === 'claude' ? 'Claude' : 'Gemini'}. Ask me anything!
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl w-full mt-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl w-full mt-6 sm:mt-8 px-4">
                 {suggestedPrompts.map((prompt, idx) => (
                   <button
                     key={idx}
                     onClick={() => setInput(prompt.text)}
-                    className="group p-4 text-left bg-white/5 backdrop-blur-md border border-amber-500/30 rounded-2xl hover:bg-amber-500/10 hover:border-amber-500/50 transition-all transform hover:scale-105 hover:shadow-xl"
+                    className="group p-3 sm:p-4 text-left bg-white/5 backdrop-blur-md border border-amber-500/30 rounded-2xl hover:bg-amber-500/10 hover:border-amber-500/50 transition-all transform hover:scale-105 hover:shadow-xl"
                   >
-                    <span className="text-2xl mb-2 block">{prompt.icon}</span>
-                    <span className="text-sm text-white/80 group-hover:text-white">
+                    <span className="text-xl sm:text-2xl mb-2 block">{prompt.icon}</span>
+                    <span className="text-xs sm:text-sm text-white/80 group-hover:text-white">
                       {prompt.text}
                     </span>
                   </button>
@@ -350,45 +351,45 @@ export default function Home() {
             messages.map((message, idx) => (
               <div
                 key={idx}
-                className={`flex gap-4 animate-slide-in ${
+                className={`flex gap-2 sm:gap-4 animate-slide-in ${
                   message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
                 }`}
               >
                 {/* Avatar */}
                 <div className={`shrink-0 ${message.role === 'user' ? 'order-2' : 'order-1'}`}>
                   {message.role === 'assistant' ? (
-                    <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
-                      <span className="text-black text-lg font-bold">AI</span>
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+                      <span className="text-black text-base sm:text-lg font-bold">AI</span>
                     </div>
                   ) : (
-                    <div className="w-10 h-10 rounded-xl bg-linear-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
-                      <span className="text-black text-lg">👤</span>
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-linear-to-br from-green-400 to-green-600 flex items-center justify-center shadow-lg">
+                      <span className="text-black text-base sm:text-lg">👤</span>
                     </div>
                   )}
                 </div>
 
                 {/* Message Content */}
-                <div className={`flex flex-col gap-2 max-w-[75%] ${message.role === 'user' ? 'items-end' : 'items-start'}`}>
+                <div className={`flex flex-col gap-2 max-w-[85%] sm:max-w-[75%] ${message.role === 'user' ? 'items-end' : 'items-start'}`}>
                   {editingIndex === idx && message.role === 'user' ? (
                     // Edit mode
                     <div className="w-full">
                       <textarea
                         value={editContent}
                         onChange={(e) => setEditContent(e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-amber-500/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-white resize-none"
+                        className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-white/10 backdrop-blur-md border border-amber-500/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 text-white text-sm sm:text-base resize-none"
                         rows={3}
                         autoFocus
                       />
                       <div className="flex gap-2 mt-2 justify-end">
                         <button
                           onClick={cancelEditing}
-                          className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded-lg transition-all text-white"
+                          className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-white/10 hover:bg-white/20 rounded-lg transition-all text-white"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={() => saveEdit(idx)}
-                          className="px-3 py-1.5 text-sm bg-amber-500 hover:bg-amber-600 rounded-lg transition-all text-black font-medium"
+                          className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm bg-amber-500 hover:bg-amber-600 rounded-lg transition-all text-black font-medium"
                         >
                           Save & Resend
                         </button>
@@ -397,7 +398,7 @@ export default function Home() {
                   ) : (
                     <>
                       <div
-                        className={`rounded-2xl px-5 py-3 shadow-lg backdrop-blur-md relative group ${
+                        className={`rounded-2xl px-3 sm:px-5 py-2 sm:py-3 shadow-lg backdrop-blur-md relative group ${
                           message.role === 'user'
                             ? 'bg-linear-to-br from-green-500 to-green-600 text-white'
                             : 'bg-white/10 border border-amber-500/30 text-white'
@@ -409,12 +410,12 @@ export default function Home() {
                               remarkPlugins={[remarkGfm]}
                               rehypePlugins={[rehypeHighlight]}
                               components={{
-                                h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mb-3 mt-4 text-amber-200" {...props} />,
-                                h2: ({ node, ...props }) => <h2 className="text-xl font-bold mb-2 mt-3 text-amber-200" {...props} />,
-                                h3: ({ node, ...props }) => <h3 className="text-lg font-semibold mb-2 mt-2 text-amber-300" {...props} />,
-                                p: ({ node, ...props }) => <p className="mb-3 leading-relaxed text-white" {...props} />,
-                                ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-3 space-y-1 text-white" {...props} />,
-                                ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-3 space-y-1 text-white" {...props} />,
+                                h1: ({ node, ...props }) => <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 mt-3 sm:mt-4 text-amber-200" {...props} />,
+                                h2: ({ node, ...props }) => <h2 className="text-lg sm:text-xl font-bold mb-2 mt-2 sm:mt-3 text-amber-200" {...props} />,
+                                h3: ({ node, ...props }) => <h3 className="text-base sm:text-lg font-semibold mb-2 mt-2 text-amber-300" {...props} />,
+                                p: ({ node, ...props }) => <p className="mb-2 sm:mb-3 leading-relaxed text-sm sm:text-base text-white" {...props} />,
+                                ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-2 sm:mb-3 space-y-1 text-sm sm:text-base text-white" {...props} />,
+                                ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-2 sm:mb-3 space-y-1 text-sm sm:text-base text-white" {...props} />,
                                 li: ({ node, ...props }) => <li className="ml-2 text-white" {...props} />,
                                 code: ({ node, inline, className, children, ...props }: any) => {
                                   const match = /language-(\w+)/.exec(className || '');
@@ -475,29 +476,29 @@ export default function Home() {
                             </ReactMarkdown>
                           </div>
                         ) : (
-                          <p className="text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">
+                          <p className="text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap wrap-break-word">
                             {message.content}
                           </p>
                         )}
                       </div>
                       
                       {/* Action buttons */}
-                      <div className="flex items-center gap-2 px-2">
-                        <span className="text-xs text-amber-300">
+                      <div className="flex items-center gap-1 sm:gap-2 px-2">
+                        <span className="text-[10px] sm:text-xs text-amber-300">
                           {formatTime(message.timestamp)}
                         </span>
-                        <div className="flex gap-1">
+                        <div className="flex gap-0.5 sm:gap-1">
                           <button
                             onClick={() => copyToClipboard(message.content, `msg-${idx}`)}
-                            className="p-1.5 hover:bg-white/10 rounded-lg transition-all group/btn"
+                            className="p-1 sm:p-1.5 hover:bg-white/10 rounded-lg transition-all group/btn"
                             title="Copy message"
                           >
                             {copiedMessage === idx ? (
-                              <svg className="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
                             ) : (
-                              <svg className="w-3.5 h-3.5 text-amber-400/70 group-hover/btn:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400/70 group-hover/btn:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
                             )}
@@ -505,10 +506,10 @@ export default function Home() {
                           {message.role === 'user' && (
                             <button
                               onClick={() => startEditing(idx, message.content)}
-                              className="p-1.5 hover:bg-white/10 rounded-lg transition-all group/btn"
+                              className="p-1 sm:p-1.5 hover:bg-white/10 rounded-lg transition-all group/btn"
                               title="Edit message"
                             >
-                              <svg className="w-3.5 h-3.5 text-amber-400/70 group-hover/btn:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400/70 group-hover/btn:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
                             </button>
@@ -523,18 +524,18 @@ export default function Home() {
           )}
           
           {isLoading && (
-            <div className="flex gap-4 animate-slide-in">
-              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
-                <span className="text-black text-lg font-bold">AI</span>
+            <div className="flex gap-2 sm:gap-4 animate-slide-in">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-linear-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+                <span className="text-black text-base sm:text-lg font-bold">AI</span>
               </div>
-              <div className="bg-white/10 backdrop-blur-md border border-amber-500/30 rounded-2xl px-5 py-3 shadow-lg">
+              <div className="bg-white/10 backdrop-blur-md border border-amber-500/30 rounded-2xl px-3 sm:px-5 py-2 sm:py-3 shadow-lg">
                 <div className="flex gap-2 items-center">
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-400 rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                   </div>
-                  <span className="text-xs text-amber-300 ml-2">Thinking...</span>
+                  <span className="text-[10px] sm:text-xs text-amber-300 ml-2">Thinking...</span>
                 </div>
               </div>
             </div>
@@ -543,8 +544,8 @@ export default function Home() {
         </div>
 
         {/* Input Area */}
-        <div className="p-6 backdrop-blur-xl bg-white/5 border-t border-amber-500/20">
-          <form onSubmit={sendMessage} className="flex gap-3 items-end">
+        <div className="p-3 sm:p-6 backdrop-blur-xl bg-white/5 border-t border-amber-500/20">
+          <form onSubmit={sendMessage} className="flex gap-2 sm:gap-3 items-end">
             <div className="flex-1 relative">
               <textarea
                 ref={inputRef}
@@ -554,15 +555,15 @@ export default function Home() {
                 placeholder="Type your message... (Shift+Enter for new line)"
                 disabled={isLoading}
                 rows={1}
-                className="w-full px-5 py-4 bg-white/5 backdrop-blur-md border border-amber-500/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 text-white placeholder-amber-300/50 resize-none transition-all"
-                style={{ maxHeight: '150px', minHeight: '56px' }}
+                className="w-full px-3 sm:px-5 py-3 sm:py-4 bg-white/5 backdrop-blur-md border border-amber-500/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 text-white placeholder-amber-300/50 resize-none transition-all text-sm sm:text-base"
+                style={{ maxHeight: '150px', minHeight: '48px' }}
               />
             </div>
             <button
               type={isLoading ? "button" : "submit"}
               onClick={isLoading ? stopGeneration : undefined}
               disabled={!isLoading && !input.trim()}
-              className={`px-8 py-4 rounded-2xl font-semibold transition-all transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex items-center gap-2 ${
+              className={`px-4 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold transition-all transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex items-center gap-1 sm:gap-2 text-sm sm:text-base ${
                 isLoading 
                   ? 'bg-red-500 hover:bg-red-600 text-white' 
                   : 'bg-linear-to-r from-amber-500 to-amber-600 text-black hover:from-amber-400 hover:to-amber-500 disabled:opacity-50 disabled:cursor-not-allowed'
@@ -571,26 +572,26 @@ export default function Home() {
               {isLoading ? (
                 <>
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4 sm:w-5 sm:h-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
                     <rect x="6" y="6" width="12" height="12" rx="1" />
                   </svg>
-                  <span>Stop</span>
+                  <span className="hidden sm:inline">Stop</span>
                 </>
               ) : (
                 <>
-                  <span>Send</span>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="hidden sm:inline">Send</span>
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>
                 </>
               )}
             </button>
           </form>
-          <p className="text-xs text-amber-300 mt-3 text-center">
-            Press <kbd className="px-2 py-1 bg-white/5 rounded border border-amber-500/30">Enter</kbd> to send • <kbd className="px-2 py-1 bg-white/5 rounded border border-amber-500/30">Shift + Enter</kbd> for new line
+          <p className="text-[10px] sm:text-xs text-amber-300 mt-2 sm:mt-3 text-center">
+            Press <kbd className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-white/5 rounded border border-amber-500/30 text-[10px] sm:text-xs">Enter</kbd> to send • <kbd className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-white/5 rounded border border-amber-500/30 text-[10px] sm:text-xs">Shift + Enter</kbd> for new line
           </p>
         </div>
       </div>
